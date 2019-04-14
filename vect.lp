@@ -24,7 +24,9 @@ do(18,test,(reverse)).        % a b c
 do(19,tesd,(createV,a)).      % a b c ; a
 do(20,test,(appendV,tesd)).   % a b c a ; a
 do(21,tesd,(deleteV)).        % a b c a
-do(22,test,(replicate,2)).    % a b c d a a b c d a
+do(22,test,(replicate,2)).    % a b c a a b c a
+do(23,test,(append,e)).       % a b c a a b c a e
+do(24,test,(find,a)).         % 1 4 5 8
 
 
 %%% Properties
@@ -112,9 +114,19 @@ deleted(V,Name) :- do(V,Name,(deleteV)).
 
 % appendV
 vector(Name,V+1,N,Elem) :- do(V,Name,(appendV,Name1)), vector(Name,V,N,Elem).
-vector(Name,V+1,N,Elem) :- do(V,Name,(appendV,Name1)), vector(Name1,V,N1,Elem),
-    length(Name,V,L), N = N1 + L.
+vector(Name,V+1,N,Elem) :- do(V,Name,(appendV,Name1)), vector(Name1,V,N1,Elem), length(Name,V,L), N = N1 + L.
 
 % replicate
 vector(Name,V+1,NN,Elem) :- do(V,Name,(replicate,R)), vector(Name,V,N,Elem),
                              length(Name,V,L), NN = N + D * L, D = 0..(R-1).
+
+% find
+n(V,Name,1..S) :- do(V,Name,(find,Elem)), { vector(Name,V,_,Elem) } = S.
+find(V,Name,N) :- do(V,Name,(find,Elem)), vector(Name,V,N,Elem).
+{ pair(V,Name,N, X) : n(V,Name,N) } = 1 :- find(V,Name,X).
+{ pair(V,Name,N, X) : find(V,Name,X) } = 1 :- n(V,Name,N).
+vector(Name,V+1,N,X) :- do(V,Name,(find,Elem)), pair(V,Name,N,X).
+:- do(V,Name,(find,Elem)), vector(Name,V+1,N1,X1), vector(Name,V+1,N2,X2),
+   N1 < N2, X1 > X2.
+:- do(V,Name,(find,Elem)), vector(Name,V+1,N1,X1), vector(Name,V+1,N2,X2),
+   N1 > N2, X1 < X2.
