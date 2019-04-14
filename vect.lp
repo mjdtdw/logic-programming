@@ -1,5 +1,3 @@
-% TODO not do 1 3 or else split
-% TODO last and tail maybe generate empty vect, but empty vect UNSATISFIABLE
 %%% Example
 v(test,1,a).                % a
 v(test,2,b).                % a b
